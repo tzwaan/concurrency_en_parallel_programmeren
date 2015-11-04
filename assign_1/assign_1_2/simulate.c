@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #include "simulate.h"
-
+#include "omp.h"
 
 /*
  * Executes the entire simulation.
@@ -25,9 +25,32 @@
 double *simulate(const int i_max, const int t_max, const int num_threads,
         double *old_array, double *current_array, double *next_array)
 {
-    /*
-     * Your implementation should go here.
-     */
+    /* Set the amount of threads used by OpenMP */
+    omp_set_num_threads(num_threads);
 
+
+    /* Loop t times */
+    int t;
+    for(t = 0; t < t_max; t++) {
+
+        /* Parallelize the calculation of the next_array */
+        #pragma omp parallel
+        {
+            int i;
+            #pragma omp for
+            for(i = 1; i < i_max - 1; i++) {
+                next_array[i] = 2 * current_array[i] - old_array[i] + 0.15 *
+                    (current_array[i - 1] - (2 * current_array[i] - current_array[i + 1]));
+            }
+        }
+
+        /* Swap arrays */
+        double *temp = g_old_array;
+        g_old_array = g_current_array;
+        g_current_array = g_next_array;
+        g_next_array = temp;
+    }
+
+    /* Return result */
     return current_array;
 }
