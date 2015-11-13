@@ -33,3 +33,5 @@
 *.zip
 *.tar
 *.rar
+*.tar.gz
+*.tbz
