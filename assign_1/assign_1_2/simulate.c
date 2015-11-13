@@ -30,25 +30,21 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 
 
     /* Loop t times */
-    int t;
+    int t, i;
     for(t = 0; t < t_max; t++) {
 
         /* Parallelize the calculation of the next_array */
-        #pragma omp parallel
-        {
-            int i;
-            #pragma omp for
-            for(i = 1; i < i_max - 1; i++) {
-                next_array[i] = 2 * current_array[i] - old_array[i] + 0.15 *
-                    (current_array[i - 1] - (2 * current_array[i] - current_array[i + 1]));
-            }
+        #pragma omp parallel for
+        for(i = 1; i < i_max - 1; i++) {
+            next_array[i] = 2 * current_array[i] - old_array[i] + 0.15 *
+                (current_array[i - 1] - (2 * current_array[i] - current_array[i + 1]));
         }
 
         /* Swap arrays */
-        double *temp = g_old_array;
-        g_old_array = g_current_array;
-        g_current_array = g_next_array;
-        g_next_array = temp;
+        double *temp = old_array;
+        old_array = current_array;
+        current_array = next_array;
+        next_array = temp;        
     }
 
     /* Return result */
