@@ -3,12 +3,13 @@ SRCFILES = assign2_1.c file.c timer.c simulate.c
 TARNAME = assign2_1.tgz
 
 RUNARGS = 1000 1000 # i_max t_max, increase this when testing on the DAS4!
+TESTARGS = 20 10
 NODES = 1 # How many DAS4 nodes
 PROCESSESPERNODE = 1 # How many processes to spawn on one machine.
 
 PRUNARGS = -v -np $(NODES) -$(PROCESSESPERNODE) \
 		   -sge-script $$PRUN_ETC/prun-openmpi
-IMAGEVIEW = display
+IMAGEVIEW = eog
 CC = mpicc
 
 WARNFLAGS = -Wall -Werror-implicit-function-declaration -Wshadow \
@@ -34,6 +35,9 @@ run: $(PROGNAME)
 
 runlocal: $(PROGNAME)
 	mpirun -n $(PROCESSESPERNODE) $(PROGNAME) $(RUNARGS)
+
+runtest: $(PROGNAME)
+	mpirun -n $(PROCESSESPERNODE) $(PROGNAME) $(TESTARGS)
 
 plot: result.txt
 	gnuplot plot.gnp
