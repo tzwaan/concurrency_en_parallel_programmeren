@@ -1,6 +1,8 @@
 /*
  * simulate.c
  *
+ * Tijmen Zwaan 10208917
+ *
  * Implement your (parallel) simulation here!
  */
 
